@@ -1,0 +1,41 @@
+name: Frontend CI
+
+on:
+  push:
+    paths:
+      - 'front/**'
+  pull_request:
+    paths:
+      - 'front/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./front
+
+      - name: Build Angular app
+        run: npm run build --prod
+        working-directory: ./front
+
+      - name: Build Docker image
+        run: docker build -t your-dockerhub-username/your-frontend-image:latest ./front
+
+      - name: Log in to Docker Hub
+        if: github.ref == 'refs/heads/main'
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u your-dockerhub-username --password-stdin
+
+      - name: Push Docker image
+        if: github.ref == 'refs/heads/main'
+        run: docker push your-dockerhub-username/your-frontend-image:latest

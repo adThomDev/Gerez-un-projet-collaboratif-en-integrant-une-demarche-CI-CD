@@ -3,7 +3,7 @@
 *.iml
 
 # Maven build output
-target/
+back/target/
 
 # Spring Boot executable jar
 *.jar.original

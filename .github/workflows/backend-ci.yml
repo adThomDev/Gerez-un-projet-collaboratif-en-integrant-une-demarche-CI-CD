@@ -1,0 +1,43 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - 'back/**'
+  pull_request:
+    paths:
+      - 'back/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Build with Maven and generate coverage report
+        run: mvn -f back/pom.xml clean test
+
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: jacoco-report
+          path: back/target/site/jacoco/
+
+      - name: Build Docker image
+        run: docker build -t your-dockerhub-username/your-backend-image:latest ./back
+
+      - name: Log in to Docker Hub
+        if: github.ref == 'refs/heads/main'
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u your-dockerhub-username --password-stdin
+
+      - name: Push Docker image
+        if: github.ref == 'refs/heads/main'
+        run: docker push your-dockerhub-username/your-backend-image:latest
