@@ -1,0 +1,9 @@
+# IntelliJ IDEA related files
+.idea/
+*.iml
+
+# Maven build output
+target/
+
+# Spring Boot executable jar
+*.jar.original
