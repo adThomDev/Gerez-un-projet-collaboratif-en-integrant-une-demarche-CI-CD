@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
@@ -29,13 +29,12 @@ jobs:
         run: npm run build --prod
         working-directory: ./front
 
-      - name: Build Docker image
-        run: docker build -t your-dockerhub-username/your-frontend-image:latest ./front
+      - name: Run tests with coverage
+        run: npm run test -- --no-watch --code-coverage
+        working-directory: ./front
 
-      - name: Log in to Docker Hub
-        if: github.ref == 'refs/heads/main'
-        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u your-dockerhub-username --password-stdin
-
-      - name: Push Docker image
-        if: github.ref == 'refs/heads/main'
-        run: docker push your-dockerhub-username/your-frontend-image:latest
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: front/coverage/
