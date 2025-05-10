@@ -38,10 +38,13 @@ jobs:
           path: front/coverage/
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        # uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@1.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_PROJECT_KEY: adthomdev
-          SONAR_ORGANIZATION: adThomDev
+          # SONAR_PROJECT_KEY: adthomdev
+          # SONAR_ORGANIZATION: adThomDev
         with:
           projectBaseDir: front
+          sonar-projectKey: adthomdev
+          sonar-organization: adThomDev
