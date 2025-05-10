@@ -25,6 +25,7 @@ jobs:
       #   working-directory: ./front
       - name: Install dependencies
         run: npm ci --prefix front
+        working-directory: ./front
 
 
       - name: Build Angular app
