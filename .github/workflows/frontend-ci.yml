@@ -9,46 +9,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: front
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: '18'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
         working-directory: ./front
 
       - name: Build Angular app
-        run: npm run build --configuration=production
+        run: npm run build --prod
+        working-directory: ./front
 
       - name: Run tests with coverage
         run: npm run test -- --no-watch --code-coverage
+        working-directory: ./front
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
-
-      - name: Run SonarCloud Analysis
-        uses: SonarSource/sonarqube-scan-action@v1
-        with:
-          projectBaseDir: front
-          args: >
-            -Dsonar.projectKey=your-sonarcloud-project-key
-            -Dsonar.organization=your-sonarcloud-organization-key
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.sources=src
-            -Dsonar.tests=src
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-
+          path: front/coverage/
