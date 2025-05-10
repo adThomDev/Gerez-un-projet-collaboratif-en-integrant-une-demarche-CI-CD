@@ -38,8 +38,8 @@ jobs:
           path: front/coverage/
 
       - name: SonarCloud Scan
-        # uses: SonarSource/sonarcloud-github-action@master
-        uses: SonarSource/sonarcloud-github-action@1.0.0
+        uses: SonarSource/sonarcloud-github-action@master
+        # uses: SonarSource/sonarcloud-github-action@1.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           # SONAR_PROJECT_KEY: adthomdev
