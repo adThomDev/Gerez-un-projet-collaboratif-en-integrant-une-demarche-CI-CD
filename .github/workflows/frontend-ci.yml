@@ -23,6 +23,11 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
+      - name: Debug lock file location
+        run: |
+          ls -l front/package-lock.json
+
+
       - name: Install dependencies
         run: npm ci
 
