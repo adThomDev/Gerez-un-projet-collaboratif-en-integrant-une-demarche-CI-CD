@@ -2,20 +2,38 @@ name: Frontend CI
 
 on:
   push:
-    branches: [main, develop-front]
+    branches:
+      - main
+      - develop-front
   pull_request:
-    branches: [main, develop-front]
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
+    name: Build and analyze
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ./front/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -38,13 +56,15 @@ jobs:
           path: front/coverage/
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        # uses: SonarSource/sonarcloud-github-action@1.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          # SONAR_PROJECT_KEY: adthomdev
-          # SONAR_ORGANIZATION: adThomDev
-        with:
-          projectBaseDir: front
-          sonar-projectKey: adthomdev
-          sonar-organization: adThomDev
+        run: |
+          npm install -g sonarqube-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=adthomdev \
+            -Dsonar.organization=adThomDev \
+            -Dsonar.sources=src \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+        working-directory: ./front
