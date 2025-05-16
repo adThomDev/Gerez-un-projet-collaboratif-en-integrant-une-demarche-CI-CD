@@ -2,24 +2,40 @@ name: Frontend CI
 
 on:
   push:
-    paths:
-      - 'front/**'
+    branches:
+      - main
+      - develop-front
   pull_request:
-    paths:
-      - 'front/**'
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
+    name: Build and analyze
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ./front/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
@@ -29,13 +45,26 @@ jobs:
         run: npm run build --prod
         working-directory: ./front
 
-      - name: Build Docker image
-        run: docker build -t your-dockerhub-username/your-frontend-image:latest ./front
+      - name: Run tests with coverage
+        run: npm run test -- --no-watch --code-coverage
+        working-directory: ./front
 
-      - name: Log in to Docker Hub
-        if: github.ref == 'refs/heads/main'
-        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u your-dockerhub-username --password-stdin
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: front/coverage/
 
-      - name: Push Docker image
-        if: github.ref == 'refs/heads/main'
-        run: docker push your-dockerhub-username/your-frontend-image:latest
+      - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npm install -g sonarqube-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD \
+            -Dsonar.organization=adthomdev \
+            -Dsonar.sources=src \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+        working-directory: ./front
