@@ -68,3 +68,13 @@ jobs:
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
         working-directory: ./front
+
+      - name: Build Docker Image
+        run: |
+          cd front
+          docker build -t adthomdev/ocrp10_frontend:latest .
+
+      - name: Push Docker Image to Registry
+        run: |
+          echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+          docker push adthomdev/ocrp10_frontend:latest
