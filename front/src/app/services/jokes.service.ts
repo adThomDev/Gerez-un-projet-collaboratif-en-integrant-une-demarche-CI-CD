@@ -8,7 +8,8 @@ import { Joke } from '../model/joke.model';
 })
 export class JokesService {
 
-  private pathService = 'api/joke';
+//   private pathService = 'api/joke';
+  private pathService = environment.apiUrl + '/api/joke';
 
   private subject: BehaviorSubject<Joke | null> = new BehaviorSubject<Joke | null>(null);
 
