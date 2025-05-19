@@ -1,3 +1,4 @@
+# BACKEND
 # IntelliJ IDEA related files
 .idea/
 *.iml
@@ -7,3 +8,16 @@ back/target/
 
 # Spring Boot executable jar
 *.jar.original
+
+# FRONTEND
+# Dependencies
+node_modules/
+
+# Angular cache
+.angular/
+
+# test coverage
+coverage/
+
+# Build output
+dist/
