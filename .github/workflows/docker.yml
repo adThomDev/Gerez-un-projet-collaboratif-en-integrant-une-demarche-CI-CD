@@ -1,0 +1,39 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  backend-docker:
+    name: Backend Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          cd back
+          docker build -t adthomdev/ocrp10_backend:latest .
+
+      - name: Push Docker Image to Registry
+        run: |
+          echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+          docker push adthomdev/ocrp10_backend:latest
+
+  frontend-docker:
+    name: Frontend Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          cd front
+          docker build -t adthomdev/ocrp10_frontend:latest .
+
+      - name: Push Docker Image to Registry
+        run: |
+          echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+          docker push adthomdev/ocrp10_frontend:latest
