@@ -86,7 +86,7 @@ jobs:
         working-directory: ./front
 
       - name: Run tests with coverage
-        run: npm run test -- --no-watch --code-coverage
+        run: npm run test -- --no-watch --code-coverage --browsers=ChromeHeadless --reporters=progress,kjhtml
         working-directory: ./front
 
       - name: SonarCloud Scan
