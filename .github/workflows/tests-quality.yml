@@ -48,3 +48,50 @@ jobs:
             -Dsonar.organization=adthomdev \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
+  frontend:
+    defaults:
+      run:
+        working-directory: front
+
+    strategy:
+      matrix:
+        node-version: [ 20 ]
+
+    name: Sonar Cloud Front-End Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:prod
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: front
+          args: >
+            -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD
+            -Dsonar.organization=adthomdev
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
