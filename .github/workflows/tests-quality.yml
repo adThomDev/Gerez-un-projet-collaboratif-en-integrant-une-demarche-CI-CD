@@ -47,11 +47,10 @@ jobs:
             -Dsonar.organization=adthomdev \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.projectBaseDir=back \
-            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml \
-            -Dsonar.java.binaries=back/target/classes \
-            -Dsonar.sources=back/src/main/java \
-            -Dsonar.tests=back/src/test/java
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.java.binaries=target/classes \
+            -Dsonar.sources=src/main/java \
+            -Dsonar.tests=src/test/java
 
       - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4
@@ -105,8 +104,7 @@ jobs:
             -Dsonar.sources=src \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.projectBaseDir=./front
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
         working-directory: ./front
 
       - name: Upload coverage report
