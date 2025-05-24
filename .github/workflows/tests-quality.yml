@@ -42,13 +42,16 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -f back/pom.xml verify sonar:sonar \
+          mvn -f back/pom.xml clean verify sonar:sonar \
             -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD \
             -Dsonar.organization=adthomdev \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.projectVersion=${{ github.run_id }}
-            -Dsonar.newCode.period=1
+            -Dsonar.projectBaseDir=back \
+            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml \
+            -Dsonar.java.binaries=back/target/classes \
+            -Dsonar.sources=back/src/main/java \
+            -Dsonar.tests=back/src/test/java
 
       - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4
@@ -103,8 +106,7 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.projectVersion=${{ github.run_id }}
-            -Dsonar.newCode.period=1
+            -Dsonar.projectBaseDir=./front
         working-directory: ./front
 
       - name: Upload coverage report
