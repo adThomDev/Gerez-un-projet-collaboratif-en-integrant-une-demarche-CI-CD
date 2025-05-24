@@ -55,5 +55,5 @@ jobs:
         working-directory: ./front
 
       - name: Build Angular app
-        run: npm run build --prod
+        run: npm run build
         working-directory: ./front
