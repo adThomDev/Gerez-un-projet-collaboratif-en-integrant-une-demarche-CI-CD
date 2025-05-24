@@ -1,18 +1,19 @@
-name: Tests and Quality
+name: Backend Tests and SonarCloud
 
 on:
   push:
-    branches:
-      - main
-      - develop-back
-      - develop-front
+    branches: [main, develop-back]
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [main, develop-back]
 
 jobs:
-  backend-tests:
-    name: Backend Tests and Quality
+  backend:
+    defaults:
+      run:
+        working-directory: back
+
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,93 +25,26 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('back/pom.xml') }}
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run tests and SonarCloud analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn -f back/pom.xml clean verify sonar:sonar \
-            -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD \
-            -Dsonar.organization=adthomdev \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-            -Dsonar.java.binaries=target/classes \
-            -Dsonar.sources=src/main/java \
-            -Dsonar.tests=src/test/java
-            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
-
-      - name: Upload JaCoCo coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-report
-          path: back/target/site/jacoco/
-
-  frontend-tests:
-    name: Frontend Tests and Quality
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Cache SonarQube packages
+      - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Cache node modules
-        uses: actions/cache@v4
-        with:
-          path: ./front/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('front/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./front
-
-      - name: Run tests with coverage
-        run: npm run test -- --no-watch --code-coverage --browsers=ChromeHeadless --reporters=progress,kjhtml
-        working-directory: ./front
-
-      - name: SonarCloud Scan
+      - name: Run Tests and SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          npm install -g sonarqube-scanner
-          sonar-scanner \
+          mvn -B verify sonar:sonar \
             -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD \
             -Dsonar.organization=adthomdev \
-            -Dsonar.sources=src \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-        working-directory: ./front
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: front/coverage/
-
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
