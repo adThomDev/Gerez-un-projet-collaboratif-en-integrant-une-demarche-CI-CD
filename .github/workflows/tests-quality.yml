@@ -86,6 +86,12 @@ jobs:
       - name: Run tests with coverage
         run: ng test --no-watch --code-coverage --browsers=ChromeHeadless
 
+      - name: Debug coverage directory
+        run: |
+          echo "Listing all files in coverage/ and coverage/bobapp/"
+          find coverage/ || echo "No coverage directory"
+          find coverage/bobapp/ || echo "No bobapp directory"
+
       - name: List coverage files
         run: |
           ls -R coverage/
