@@ -45,6 +45,14 @@ jobs:
         run: |
           mvn -B verify
 
+      - name: Upload backend build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-artifacts
+          path: |
+            back/target/classes
+            back/target/site/jacoco/jacoco.xml
+
   frontend:
     defaults:
       run:
@@ -104,6 +112,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Download backend build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-artifacts
+          path: back/target
       - name: SonarCloud Scan (aggregate)
         uses: SonarSource/sonarcloud-github-action@v2
         with:
