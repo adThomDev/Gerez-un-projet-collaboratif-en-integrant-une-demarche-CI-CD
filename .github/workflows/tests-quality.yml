@@ -61,10 +61,11 @@ jobs:
     name: Sonar Cloud Front-End Scan
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+    steps:      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0      - name: Set up Node.js
+          fetch-depth: 0
+
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
