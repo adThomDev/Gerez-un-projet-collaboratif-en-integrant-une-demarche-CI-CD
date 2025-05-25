@@ -79,16 +79,14 @@ jobs:
           restore-keys: ${{ runner.os }}-node
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests with coverage
+        run: npm ci      - name: Run tests with coverage
         run: npm test -- --watch=false --code-coverage --browsers=ChromeHeadless
 
       - name: Debug show lcov info location
         run: |
           ls -lh coverage/bobapp
           cat coverage/bobapp/lcov.info || echo "lcov.info not found"
-
+          
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
@@ -96,7 +94,11 @@ jobs:
           args: >
             -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD
             -Dsonar.organization=adthomdev
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
