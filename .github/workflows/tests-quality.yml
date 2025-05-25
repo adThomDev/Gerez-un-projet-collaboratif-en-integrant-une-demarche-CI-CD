@@ -105,6 +105,10 @@ jobs:
           echo "Content of lcov.info:"
           cat coverage/*/lcov.info || echo "lcov.info not found"
 
+      - name: Fix lcov.info paths for SonarCloud
+        run: |
+          sed -i 's|SF:src/|SF:front/src/|g' coverage/bobapp/lcov.info
+
   sonarcloud:
     needs: [backend, frontend]
     runs-on: ubuntu-latest
