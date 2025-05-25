@@ -1,0 +1,79 @@
+name: Frontend tests and SonarCloud
+
+on:
+  push:
+    branches: [main, develop-back, develop-front]
+  pull_request:
+    branches: [main, develop-back, develop-front]
+
+jobs:
+  frontend:
+    defaults:
+      run:
+        working-directory: front
+
+    strategy:
+      matrix:
+        node-version: [ 20 ]
+
+    name: Sonar Cloud Front-End Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install -g @angular/cli
+
+      - name: Run tests with coverage
+        run: ng test --no-watch --code-coverage --browsers=ChromeHeadless | tee test-output.log
+
+      - name: Print test output
+        run: cat test-output.log
+
+      - name: Debug coverage directory
+        run: |
+          echo "Listing all files in coverage/ and coverage/bobapp/"
+          find coverage/ || echo "No coverage directory"
+          find coverage/bobapp/ || echo "No bobapp directory"
+
+      - name: List coverage files
+        run: |
+          ls -R coverage/
+          echo "Content of lcov.info:"
+          cat coverage/*/lcov.info || echo "lcov.info not found"
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: front
+          args: >
+            -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD
+            -Dsonar.organization=adthomdev
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.sources=src
+            -Dsonar.exclusions=**/*.spec.ts
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.test.exclusions=**/node_modules/**
+            -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.coverage.exclusions=**/*.spec.ts,**/test.ts,**/polyfills.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
