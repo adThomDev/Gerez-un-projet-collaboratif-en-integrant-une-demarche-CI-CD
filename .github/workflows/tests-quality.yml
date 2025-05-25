@@ -69,14 +69,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache node_modules
+          node-version: ${{ matrix.node-version }}      - name: Cache node_modules
         uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node      - name: Install dependencies
+          restore-keys: ${{ runner.os }}-node
+
+      - name: Install dependencies
         run: |
           npm ci
           npm install -g @angular/cli
@@ -87,9 +87,9 @@ jobs:
       - name: List coverage files
         run: |
           ls -R coverage/
-          echo "Content of lcov.info:"
-          cat coverage/*/lcov.info || echo "lcov.info not found"
-            - name: SonarCloud Scan
+          echo "Content of lcov.info:"          cat coverage/*/lcov.info || echo "lcov.info not found"
+
+      - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: front
