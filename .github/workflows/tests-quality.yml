@@ -39,15 +39,11 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Run Tests and SonarCloud Analysis
+      - name: Build and test backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B verify sonar:sonar \
-            -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD \
-            -Dsonar.organization=adthomdev \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          mvn -B verify
 
   frontend:
     defaults:
@@ -101,25 +97,13 @@ jobs:
           echo "Content of lcov.info:"
           cat coverage/*/lcov.info || echo "lcov.info not found"
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+  sonarcloud:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
         with:
-          projectBaseDir: front
-          args: >
-            -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD
-            -Dsonar.organization=adthomdev
-            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
-            -Dsonar.sources=src
-            -Dsonar.exclusions=**/*.spec.ts
-            -Dsonar.tests=src
-            -Dsonar.test.inclusions=**/*.spec.ts
-            -Dsonar.test.exclusions=**/node_modules/**
-            -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
-            -Dsonar.coverage.exclusions=**/*.spec.ts,**/test.ts,**/polyfills.ts
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+          fetch-depth: 0
       - name: SonarCloud Scan (aggregate)
         uses: SonarSource/sonarcloud-github-action@v2
         with:
