@@ -84,6 +84,11 @@ jobs:
       - name: Run tests with coverage
         run: npm test -- --watch=false --code-coverage --browsers=ChromeHeadless
 
+      - name: Debug show lcov info location
+        run: |
+          ls -lh coverage/bobapp
+          cat coverage/bobapp/lcov.info || echo "lcov.info not found"
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
