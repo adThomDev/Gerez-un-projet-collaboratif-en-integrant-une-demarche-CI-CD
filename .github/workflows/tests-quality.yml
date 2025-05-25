@@ -2,9 +2,9 @@ name: Backend Tests and SonarCloud
 
 on:
   push:
-    branches: [main, develop-back]
+    branches: [main, develop-back, develop-front]
   pull_request:
-    branches: [main, develop-back]
+    branches: [main, develop-back, develop-front]
 
 jobs:
 #  backend:
@@ -76,18 +76,20 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node
-
-      - name: Install dependencies
-        # run: npm ci      - name: Run tests with coverage
-        run: npm test -- --watch=false --code-coverage --browsers=ChromeHeadless
-
-      - name: Debug show lcov info location
+          restore-keys: ${{ runner.os }}-node      - name: Install dependencies
         run: |
-          ls -lh coverage/bobapp
-          cat coverage/bobapp/lcov.info || echo "lcov.info not found"
-          
-      - name: SonarCloud Scan
+          npm ci
+          npm install -g @angular/cli
+
+      - name: Run tests with coverage
+        run: ng test --no-watch --code-coverage --browsers=ChromeHeadless
+
+      - name: List coverage files
+        run: |
+          ls -R coverage/
+          echo "Content of lcov.info:"
+          cat coverage/*/lcov.info || echo "lcov.info not found"
+            - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: front
@@ -96,9 +98,12 @@ jobs:
             -Dsonar.organization=adthomdev
             -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
             -Dsonar.sources=src
+            -Dsonar.exclusions=**/*.spec.ts
             -Dsonar.tests=src
             -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.test.exclusions=**/node_modules/**
             -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.coverage.exclusions=**/*.spec.ts,**/test.ts,**/polyfills.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
