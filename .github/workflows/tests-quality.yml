@@ -82,13 +82,9 @@ jobs:
         run: |
           npm ci
           npm install -g @angular/cli
-          npm install --save-dev nyc
 
       - name: Run tests with coverage
         run: ng test --no-watch --code-coverage --browsers=ChromeHeadless
-
-      - name: Generate lcov.info with nyc
-        run: npx nyc report --reporter=lcov --report-dir=coverage/bobapp
 
       - name: List coverage files
         run: |
