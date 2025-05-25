@@ -82,7 +82,7 @@ jobs:
         run: npm ci
 
       - name: Run tests with coverage
-        run: npm run test:prod
+        run: npm test -- --watch=false --code-coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
@@ -91,7 +91,8 @@ jobs:
           args: >
             -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD
             -Dsonar.organization=adthomdev
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
