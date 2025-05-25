@@ -1,4 +1,4 @@
-name: Tests and SonarCloud
+name: Backend Tests and SonarCloud
 
 on:
   push:
@@ -76,40 +76,20 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node
-
-      - name: Install dependencies
+          restore-keys: ${{ runner.os }}-node      - name: Install dependencies
         run: |
           npm ci
           npm install -g @angular/cli
-          npm install --save-dev nyc
 
       - name: Run tests with coverage
         run: ng test --no-watch --code-coverage --browsers=ChromeHeadless
-
-      - name: Generate lcov.info with nyc
-        run: npx nyc report --reporter=lcov --report-dir=coverage/bobapp
 
       - name: List coverage files
         run: |
           ls -R coverage/
           echo "Content of lcov.info:"
           cat coverage/*/lcov.info || echo "lcov.info not found"
-
-      # - name: Install dependencies
-      #   run: |
-      #     npm ci
-      #     npm install -g @angular/cli
-
-      # - name: Run tests with coverage
-      #   run: ng test --no-watch --code-coverage --browsers=ChromeHeadless
-
-      # - name: List coverage files
-      #   run: |
-      #     ls -R coverage/
-      #     echo "Content of lcov.info:"          cat coverage/*/lcov.info || echo "lcov.info not found"
-
-      - name: SonarCloud Scan
+            - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: front
