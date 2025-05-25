@@ -76,8 +76,8 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node      
-          
+          restore-keys: ${{ runner.os }}-node
+
       - name: Install dependencies
         run: |
           npm ci
@@ -86,24 +86,10 @@ jobs:
       - name: Run tests with coverage
         run: ng test --no-watch --code-coverage --browsers=ChromeHeadless
 
-      - name: Debug coverage directory
-        run: |
-          echo "Listing all files in coverage/ and coverage/bobapp/"
-          find coverage/ || echo "No coverage directory"
-          find coverage/bobapp/ || echo "No bobapp directory"
-
       - name: List coverage files
         run: |
           ls -R coverage/
-          echo "Content of lcov.info:"
-          cat coverage/*/lcov.info || echo "lcov.info not found"
-
-      - name: Check lcov.info exists and is not empty
-        run: |
-          if [ ! -s coverage/bobapp/lcov.info ]; then
-            echo "lcov.info missing or empty!"
-            exit 1
-          fi
+          echo "Content of lcov.info:"          cat coverage/*/lcov.info || echo "lcov.info not found"
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
@@ -112,10 +98,14 @@ jobs:
           args: >
             -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD
             -Dsonar.organization=adthomdev
-            -Dsonar.sources=src
             -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.sources=src
+            -Dsonar.exclusions=**/*.spec.ts
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.test.exclusions=**/node_modules/**
             -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.coverage.exclusions=**/*.spec.ts,**/test.ts,**/polyfills.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
