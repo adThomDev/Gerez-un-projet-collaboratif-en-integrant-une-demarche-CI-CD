@@ -91,7 +91,8 @@ jobs:
           ls -R coverage/
           echo "Content of lcov.info:"
           cat coverage/*/lcov.info || echo "lcov.info not found"
-            - name: SonarCloud Scan
+
+      - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: front
