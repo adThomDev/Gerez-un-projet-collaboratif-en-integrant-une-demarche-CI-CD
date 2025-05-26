@@ -107,7 +107,7 @@ jobs:
         with:
           projectBaseDir: front
           args: >
-            -Dsonar.projectKey=adthomdev_ocrp10-frontend
+            -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD
             -Dsonar.organization=adthomdev
             -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
             -Dsonar.sources=src
@@ -120,4 +120,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          
