@@ -49,6 +49,7 @@ jobs:
             -Dsonar.organization=adthomdev \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.inclusions=back/src/**
 
   frontend:
     defaults:
@@ -117,6 +118,7 @@ jobs:
             -Dsonar.test.exclusions=**/node_modules/**
             -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
             -Dsonar.coverage.exclusions=**/*.spec.ts,**/test.ts,**/polyfills.ts
+            -Dsonar.inclusions=front/src/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
