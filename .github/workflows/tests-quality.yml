@@ -12,6 +12,7 @@ jobs:
       run:
         working-directory: back
 
+    name: Backend
     runs-on: ubuntu-latest
 
     steps:
@@ -58,7 +59,7 @@ jobs:
       matrix:
         node-version: [ 20 ]
 
-    name: Sonar Cloud Front-End Scan
+    name: Frontend
     runs-on: ubuntu-latest
 
     steps:
