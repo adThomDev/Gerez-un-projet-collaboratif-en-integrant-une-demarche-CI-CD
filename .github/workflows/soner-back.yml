@@ -1,4 +1,4 @@
-name: SonarQube
+name: sonar-backend
 on:
   push:
     branches:
@@ -33,4 +33,10 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ocrp10-backend
+        run: |
+          mvn -B verify sonar:sonar \
+            -Dsonar.projectKey=ocrp10-backend \
+            -Dsonar.organization=adthomdev \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.inclusions=back/src/**
