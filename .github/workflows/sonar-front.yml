@@ -7,6 +7,9 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   sonarqube:
+    defaults:
+      run:
+        working-directory: front
     name: SonarQube
     runs-on: ubuntu-latest
     steps:
