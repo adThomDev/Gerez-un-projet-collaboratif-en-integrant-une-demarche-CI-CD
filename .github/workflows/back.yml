@@ -61,4 +61,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: ./back
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD -Dsonar.projectName=back-CI-CD
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=adThomDev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD -Dsonar.projectName=back-CI-CD -Dsonar.organization=adthomdev
