@@ -76,3 +76,4 @@ jobs:
             -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
