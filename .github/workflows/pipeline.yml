@@ -1,0 +1,21 @@
+name: DevOps Pipeline complet
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Run Tests
+    uses: ./.github/workflows/tests.yml
+
+  quality:
+    name: Quality Analysis
+    needs: tests
+    uses: ./.github/workflows/sonar.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
