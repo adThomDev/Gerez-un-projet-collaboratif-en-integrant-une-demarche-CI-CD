@@ -1,0 +1,78 @@
+name: Tests Frontend
+
+# Les déclencheurs du workflow
+on:
+  # Lors d'un push 
+  push:
+    branches: ["main"]
+  # Ou une pull-request
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  frontend-tests:
+    # S'exécute sur une VM Ubuntu
+    runs-on: ubuntu-latest
+    
+    # Etapes du workflow
+    steps:
+      # Récupère le code
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      # Installe node
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      # Installe les dépendences 
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./front
+
+      # Lance les tests dans le front (sans interface graphique)
+      - name: Tests with coverage
+        run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless --code-coverage
+        working-directory: ./front
+
+      # Archive les rapports sous forme d'artifact
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: front/coverage/bobapp
+
+      # Restaure les fichiers depuis le cache
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Node modules
+        uses: actions/cache@v4
+        with:
+          path: front/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node
+
+      # Lance l'analyse SonarCloud 
+      - name: SonarCloud Analysis
+        uses: SonarSource/sonarqube-scan-action@v4
+        with:
+          projectBaseDir: front
+          args: >
+            -Dsonar.projectKey=adthomdev_Gerez-un-projet-collaboratif-en-integrant-une-demarche-CI-CD
+            -Dsonar.organization=adthomdev
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.exclusions=node_modules/**,dist/**
+            -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
