@@ -1,10 +1,11 @@
 name: SonarQube Analysis
 
 on:
-  workflow_run:
-    workflows: ["Tests (Junit/JaCoCo and Jasmine/Karma)"]
-    types:
-      - completed
+  workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
+  workflow_dispatch:
 
 jobs:
   sonarqube:
