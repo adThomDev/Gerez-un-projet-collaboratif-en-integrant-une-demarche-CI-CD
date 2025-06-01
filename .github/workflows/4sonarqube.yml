@@ -41,6 +41,7 @@ jobs:
       - name: SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        working-directory: back
         run: |
           mvn sonar:sonar \
             -Dsonar.projectKey=ocrp10analysis \
