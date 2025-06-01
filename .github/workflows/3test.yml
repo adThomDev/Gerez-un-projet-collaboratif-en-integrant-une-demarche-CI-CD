@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  backend tests:
+  backend_tests:
     name: Backend tests
     defaults:
       run:
@@ -34,7 +34,7 @@ jobs:
           name: backend-coverage-report
           path: target/site/jacoco/
 
-  frontend tests:
+  frontend_tests:
     name: Frontend tests
     defaults:
       run:
