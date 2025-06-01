@@ -54,6 +54,7 @@ jobs:
         with:
           args: |
             -Dsonar.projectKey=ocrp10analysis 
+            -Dsonar.organization=adthomdev
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.sources=back/src/main/java,front/src
             -Dsonar.tests=back/src/test/java,front/src
