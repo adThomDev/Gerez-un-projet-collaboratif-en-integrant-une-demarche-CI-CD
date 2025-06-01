@@ -24,10 +24,10 @@ jobs:
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  # containerization:
-  #   name: Containerizing
-  #   needs: analysis
-  #   uses: ./.github/workflows/5docker.yml
-  #   secrets:
-  #     DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-  #     DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+  containerization:
+    name: Containerizing
+    needs: analysis
+    uses: ./.github/workflows/5docker.yml
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
