@@ -71,6 +71,3 @@ jobs:
         with:
           name: frontend-coverage-report
           path: front/coverage/bobapp/ 
-
-
-
