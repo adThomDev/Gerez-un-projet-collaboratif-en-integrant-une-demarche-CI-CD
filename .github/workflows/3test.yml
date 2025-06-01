@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: backend-coverage-report
-          path: target/site/jacoco/
+          path: back/target/site/jacoco/
 
   frontend_tests:
     name: Frontend tests
@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: frontend-coverage-report
-          path: coverage/bobapp/ 
+          path: front/coverage/bobapp/ 
 
 
 
