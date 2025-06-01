@@ -40,6 +40,10 @@ jobs:
         with:
           node-version: 20
 
+      - name: Build backend (ensure classes exist)
+        run: mvn clean verify
+        working-directory: back
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@master
         env:
