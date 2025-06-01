@@ -11,8 +11,8 @@ jobs:
   sonarqube:
     name: SonarQube Analysis
     defaults:
-      # run:
-      #   working-directory: back
+      run:
+        working-directory: back
     runs-on: ubuntu-latest
 
     steps:
