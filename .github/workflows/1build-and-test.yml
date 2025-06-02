@@ -1,0 +1,86 @@
+name: Build and Test
+
+on:
+  workflow_call:
+
+jobs:
+  backend:
+    name: Backend build and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: back
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'    # OpenJDK distribution optimized for CI/CD
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2    # Maven local repository location
+          key: ${{ runner.os }}-m2-${{ hashFiles('back/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build and test with Maven
+        run: mvn clean verify    # Builds, runs all tests, and generates coverage report
+
+      - name: Upload compiled classes    # For SonarQube analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-classes
+          path: back/target/classes
+
+      - name: Upload coverage report    # For SonarQube analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-report
+          path: back/target/site/jacoco/
+
+  frontend:
+    name: Frontend build and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ./front/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test -- --no-watch --browsers=ChromeHeadless --code-coverage
+
+      - name: Upload build    # For Docker image creation
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: front/dist
+
+      - name: Upload coverage report    # For SonarQube analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage-report
+          path: front/coverage/bobapp/

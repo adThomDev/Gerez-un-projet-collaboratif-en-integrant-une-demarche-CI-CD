@@ -6,15 +6,10 @@ on:    # Trigger conditions for the pipeline
   pull_request:
     branches: [ main ]    # Run pipeline when a PR is made to main branch
 
-jobs:
-  build:
-    name: Building frontend and backend
-    uses: ./.github/workflows/1build.yml    # References workflow file to use
-
-  test:
-    name: Testing    # Runs unit tests and generates coverage reports
-    needs: build    # Waits for build job to complete before starting
-    uses: ./.github/workflows/2test.yml
+jobs:  
+  build_and_test:
+    name: Building and Testing
+    uses: ./.github/workflows/1build-and-test.yml    # References the combined build and test workflow
 
   analysis:
     name: Analysing    # Performs code quality analysis with SonarCloud

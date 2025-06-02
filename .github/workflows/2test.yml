@@ -13,8 +13,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        # with:
-        #   fetch-depth: 0    # Fetches all history, needed for proper test coverage analysis
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -59,7 +57,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node
-           
+
       - name: Install dependencies and run tests
         run: |
           npm install
@@ -68,5 +66,5 @@ jobs:
       - name: Upload front coverage report to GitHub Actions
         uses: actions/upload-artifact@master
         with:
-          name: frontend-coverage-report    # This artifact will be used by SonarQube for frontend coverage analysis
+          name: frontend-coverage-report
           path: front/coverage/bobapp/      # Karma/Jasmine coverage report location
