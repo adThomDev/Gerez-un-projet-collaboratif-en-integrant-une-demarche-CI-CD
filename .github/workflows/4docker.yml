@@ -15,6 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Download backend artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-classes
+          path: back/target/classes
+
       - name: Build Docker Image
         run: |
           cd back
@@ -30,6 +36,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: front/dist
 
       - name: Build Docker
         run: |
