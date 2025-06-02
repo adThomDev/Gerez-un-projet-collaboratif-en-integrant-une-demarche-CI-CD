@@ -1,64 +1,64 @@
 name: Build
 
 on:
-  workflow_call:
+  workflow_call:    # Allows this workflow to be called by other workflows (i.e. 0pipeline.yml)
 
 jobs:
   backend-build:
     name: Build Backend
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest    # Uses Ubuntu runner for Maven/Java compatibility
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4   # Checks out the repository code to the runner
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17   # Sets up Java Development Kit version 17 for building the backend
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: "zulu"
+          distribution: "zulu"    # OpenJDK distribution optimized for CI/CD
 
-      - name: Cache Maven packages
+      - name: Cache Maven packages    # Speeds up builds by caching dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('back/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          path: ~/.m2    # Maven local repository location
+          key: ${{ runner.os }}-m2-${{ hashFiles('back/pom.xml') }}    # Cache key based on OS and pom.xml content
+          restore-keys: ${{ runner.os }}-m2   # Fallback key if the exact cache is not found
 
-      - name: Build with Maven
+      - name: Build with Maven  # Runs Maven to clean previous builds and package the application
         run: mvn -f back/pom.xml clean package
 
-      - name: Upload backend classes
+      - name: Upload backend classes    # Uploads compiled classes to GitHub Actions to make them available for tests and SonarQube
         uses: actions/upload-artifact@v4
         with:
-          name: backend-classes
-          path: back/target/classes
+          name: backend-classes    # Artifact name
+          path: back/target/classes   # Path to the compiled classes directory
 
   frontend-build:
     name: Build Frontend
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # Uses Ubuntu runner for Node.js compatibility
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache node modules
+      - name: Cache node modules    # Speeds up builds by caching npm dependencies
         uses: actions/cache@v4
         with:
           path: ./front/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('front/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('front/package-lock.json') }}    # Cache key based on package-lock.json
           restore-keys: ${{ runner.os }}-node
 
-      - name: Set up Node.js
+      - name: Set up Node.js # Sets up Node.js environment for building the frontend
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20"    # Latest LTS version of Node.js
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./front
+        working-directory: ./front    # Changes directory to frontend folder
 
       - name: Build Angular app
         run: npm run build
         working-directory: ./front
 
-      - name: Upload frontend build
+      - name: Upload frontend build    # Makes built app available for Docker image creation
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist

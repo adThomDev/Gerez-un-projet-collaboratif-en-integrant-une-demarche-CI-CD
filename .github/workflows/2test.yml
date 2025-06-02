@@ -1,4 +1,4 @@
-name: Tests (Junit/JaCoCo and Jasmine/Karma)
+name: Tests # Using Junit/JaCoCo and Jasmine/Karma
 
 on:
   workflow_call:
@@ -13,8 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        # with:
+        #   fetch-depth: 0    # Fetches all history, needed for proper test coverage analysis
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -24,14 +24,14 @@ jobs:
 
       - name: Testing
         run: |
-          mvn clean install
-          mvn clean verify
+          mvn clean install    # Installs the project and runs unit tests
+          mvn clean verify    # Runs integration tests and generates JaCoCo coverage report
           
       - name: Upload back coverage report to GitHub Actions
         uses: actions/upload-artifact@master
         with:
-          name: backend-coverage-report
-          path: back/target/site/jacoco/
+          name: backend-coverage-report    # To be used by SonarQube for coverage analysis
+          path: back/target/site/jacoco/   # JaCoCo coverage report location
 
   frontend_tests:
     name: Frontend tests
@@ -58,15 +58,13 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node
-
-      - name: Install dependencies and run tests
+          restore-keys: ${{ runner.os }}-node      - name: Install dependencies and run tests
         run: |
           npm install
-          npm run test -- --no-watch --browsers=ChromeHeadless --code-coverage
+          npm run test -- --no-watch --browsers=ChromeHeadless --code-coverage    # Runs tests headless with coverage reporting enabled
       
       - name: Upload front coverage report to GitHub Actions
         uses: actions/upload-artifact@master
         with:
-          name: frontend-coverage-report
-          path: front/coverage/bobapp/ 
+          name: frontend-coverage-report    # This artifact will be used by SonarQube for frontend coverage analysis
+          path: front/coverage/bobapp/      # Karma/Jasmine coverage report location
