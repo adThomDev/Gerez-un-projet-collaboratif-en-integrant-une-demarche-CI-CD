@@ -14,14 +14,14 @@ jobs:
   analysis:
     name: Analysing    # Performs code quality analysis with SonarCloud
     needs: build_and_test
-    uses: ./.github/workflows/3sonarqube.yml
+    uses: ./.github/workflows/2sonarqube.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Authentication token for SonarCloud to be found in GitHub Secrets
 
   containerization:
     name: Containerizing    # Builds and pushes frontend and backend Docker images
     needs: analysis
-    uses: ./.github/workflows/4docker.yml
+    uses: ./.github/workflows/3docker.yml
     secrets:
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
