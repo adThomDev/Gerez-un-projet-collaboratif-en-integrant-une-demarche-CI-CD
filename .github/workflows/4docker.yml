@@ -7,7 +7,6 @@ on:
         required: true
       DOCKER_HUB_TOKEN:
         required: true
-  workflow_dispatch:
 
 jobs:
   backend-docker:
