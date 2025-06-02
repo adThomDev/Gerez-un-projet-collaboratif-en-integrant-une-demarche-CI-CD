@@ -13,7 +13,7 @@ jobs:
 
   analysis:
     name: Analysing    # Performs code quality analysis with SonarCloud
-    needs: test
+    needs: build_and_test
     uses: ./.github/workflows/3sonarqube.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Authentication token for SonarCloud to be found in GitHub Secrets
