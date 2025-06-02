@@ -10,7 +10,7 @@ on:
 
 jobs:
   backend-docker:
-    name: Backend Docker
+    name: Docker backend image build and push
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,12 +26,12 @@ jobs:
           docker push adthomdev/ocrp10_backend:latest
 
   frontend-docker:
-    name: Frontend Docker
+    name: Docker frontend image build and push
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Docker Image
+      - name: Build Docker
         run: |
           cd front
           docker build -t adthomdev/ocrp10_frontend:latest .
