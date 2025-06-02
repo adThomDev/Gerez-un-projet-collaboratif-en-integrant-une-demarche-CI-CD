@@ -5,29 +5,28 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build:
     name: Building
-    uses: ./.github/workflows/2build.yml
+    uses: ./.github/workflows/1build.yml
 
   test:
     name: Testing
     needs: build
-    uses: ./.github/workflows/3test.yml
+    uses: ./.github/workflows/2test.yml
 
   analysis:
     name: Analysing
     needs: test
-    uses: ./.github/workflows/4sonarqube.yml
+    uses: ./.github/workflows/3sonarqube.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   containerization:
     name: Containerizing
     needs: analysis
-    uses: ./.github/workflows/5docker.yml
+    uses: ./.github/workflows/4docker.yml
     secrets:
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
