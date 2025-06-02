@@ -65,3 +65,7 @@ jobs:
             -Dsonar.typescript.lcov.reportPaths=front/coverage/bobapp/lcov.info
             -Dsonar.javascript.lcov.reportPaths=front/coverage/bobapp/lcov.info
             -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.inclusions=**/*.java,**/*.js,**/*.ts,**/*.html,**/*.css,**/*.scss
+            -Dsonar.exclusions=front/node_modules/**,front/dist/**,front/coverage/**,**/*.spec.ts,**/*.test.ts,**/*.min.js
+            -Dsonar.typescript.file.suffixes=.ts,.tsx
+            -Dsonar.javascript.file.suffixes=.js,.jsx
