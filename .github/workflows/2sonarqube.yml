@@ -4,42 +4,42 @@ on:
   workflow_call:
     secrets:
       SONAR_TOKEN:
-        required: true
+        required: true # Prevents launching the workflow without SonarQube authentication token
 
 jobs:
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
 
-    steps:
+    steps:      
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetches complete Git history so SonarCloud can track who changed what and when, and add blames
 
-      - name: Download backend coverage report
+      - name: Download backend coverage report# Get JaCoCo report from test job
         uses: actions/download-artifact@v4
         with:
           name: backend-coverage-report
           path: back/target/site/jacoco/
 
-      - name: Download frontend coverage report
+      - name: Download frontend coverage report # Get Karma coverage from test job
         uses: actions/download-artifact@v4
         with:
           name: frontend-coverage-report
           path: front/coverage/bobapp/
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17 # Required for SonarQube scanner
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: "zulu"
 
-      - name: Set up Node.js
+      - name: Set up Node.js # Required for TypeScript analysis
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Download backend classes
+      - name: Download backend classes # Get compiled classes for static analysis
         uses: actions/download-artifact@v4
         with:
           name: backend-classes
@@ -47,22 +47,22 @@ jobs:
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:          
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Allows SonarCloud to add analysis results and comments to Pull Requests
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: |
-            -Dsonar.projectKey=ocrp10analysis 
-            -Dsonar.organization=adthomdev
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.sources=back/src/main/java,front/src
-            -Dsonar.java.binaries=back/target/classes
-            -Dsonar.inclusions=**/*.java,**/*.ts,**/*.html,**/*.css,**/*.scss
-            -Dsonar.exclusions=front/node_modules/**,front/dist/**,front/coverage/**,front/src/test.ts,front/src/environments/*.ts,**/*.spec.ts,**/*.test.ts,**/*.min.js
-            -Dsonar.tests=back/src/test/java
-            -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts,**/*Test.java
-            -Dsonar.java.coveragePlugin=jacoco
-            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
-            -Dsonar.typescript.file.suffixes=.ts,.tsx
-            -Dsonar.typescript.lcov.reportPaths=front/coverage/bobapp/lcov.info
-            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.projectKey=ocrp10analysis              # Unique project identifier in SonarCloud
+            -Dsonar.organization=adthomdev                 # SonarCloud organization
+            -Dsonar.host.url=https://sonarcloud.io        # SonarCloud URL
+            -Dsonar.sources=back/src/main/java,front/src  # Source code locations
+            -Dsonar.java.binaries=back/target/classes     # Compiled Java classes location
+            -Dsonar.inclusions=**/*.java,**/*.ts,**/*.html,**/*.css,**/*.scss    # Files to analyze
+            -Dsonar.exclusions=front/node_modules/**,front/dist/**,front/coverage/**,front/src/test.ts,front/src/environments/*.ts,**/*.spec.ts,**/*.test.ts,**/*.min.js    # Files to ignore
+            -Dsonar.tests=back/src/test/java              # Test source locations
+            -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts,**/*Test.java    # Test file patterns
+            -Dsonar.java.coveragePlugin=jacoco            # Java coverage tool
+            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml    # Java coverage report
+            -Dsonar.typescript.file.suffixes=.ts,.tsx     # TypeScript files to analyze
+            -Dsonar.typescript.lcov.reportPaths=front/coverage/bobapp/lcov.info    # TypeScript coverage report
+            -Dsonar.sourceEncoding=UTF-8                  # Source files encoding
