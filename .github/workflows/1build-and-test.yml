@@ -6,7 +6,7 @@ on:
 jobs:
   backend:
     name: Backend build and test
-    runs-on: ubuntu-latest    # Uses Ubuntu runner for Maven/Java compatibility
+    runs-on: ubuntu-latest    # Uses Ubuntu runner (for Maven/Java compatibility)
     defaults:
       run:
         working-directory: back

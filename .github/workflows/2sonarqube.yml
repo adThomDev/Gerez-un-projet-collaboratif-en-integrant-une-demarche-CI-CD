@@ -52,15 +52,15 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: |
-            -Dsonar.projectKey=ocrp10analysis              # Unique project identifier in SonarCloud
-            -Dsonar.organization=adthomdev                 # SonarCloud organization
-            -Dsonar.host.url=https://sonarcloud.io        # SonarCloud URL
+            -Dsonar.projectKey=ocrp10analysis              # Unique project identifier in SonarCloud for the project's organization
+            -Dsonar.organization=adthomdev                 # SonarCloud organization for this project
+            -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.sources=back/src/main/java,front/src  # Source code locations
             -Dsonar.java.binaries=back/target/classes     # Compiled Java classes location
-            -Dsonar.inclusions=**/*.java,**/*.ts,**/*.html,**/*.css,**/*.scss    # Files to analyze
-            -Dsonar.exclusions=front/node_modules/**,front/dist/**,front/coverage/**,front/src/test.ts,front/src/environments/*.ts,**/*.spec.ts,**/*.test.ts,**/*.min.js    # Files to ignore
+            -Dsonar.inclusions=**/*.java,**/*.ts,**/*.html,**/*.css,**/*.scss
+            -Dsonar.exclusions=front/node_modules/**,front/dist/**,front/coverage/**,front/src/test.ts,front/src/environments/*.ts,**/*.spec.ts,**/*.test.ts,**/*.min.js
             -Dsonar.tests=back/src/test/java              # Test source locations
-            -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts,**/*Test.java    # Test file patterns
+            -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts,**/*Test.java
             -Dsonar.java.coveragePlugin=jacoco            # Java coverage tool
             -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml    # Java coverage report
             -Dsonar.typescript.file.suffixes=.ts,.tsx     # TypeScript files to analyze

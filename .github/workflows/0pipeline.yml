@@ -9,7 +9,7 @@ on:    # Trigger conditions for the pipeline
 jobs:  
   build_and_test:
     name: Building and Testing
-    uses: ./.github/workflows/1build-and-test.yml    # References the combined build and test workflow
+    uses: ./.github/workflows/1build-and-test.yml    # References the build and test workflow
 
   analysis:
     name: Analysing    # Performs code quality analysis with SonarCloud

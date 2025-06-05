@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Docker images Build and Push
 
 on:
   workflow_call:
@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download backend artifacts
+      - name: Download backend artifacts    # Get compiled classes from build job
         uses: actions/download-artifact@v4
         with:
           name: backend-classes
@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download frontend build
+      - name: Download frontend build    # Get compiled Angular app from build job
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
