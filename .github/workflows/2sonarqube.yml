@@ -16,30 +16,30 @@ jobs:
         with:
           fetch-depth: 0 # Fetches complete Git history so SonarCloud can track who changed what and when, and add blames
 
-      - name: Download backend coverage report# Get JaCoCo report from test job
+      - name: Download backend coverage report  # Get JaCoCo coverage report from test job
         uses: actions/download-artifact@v4
         with:
           name: backend-coverage-report
           path: back/target/site/jacoco/
 
-      - name: Download frontend coverage report # Get Karma coverage from test job
+      - name: Download frontend coverage report # Get Karma coverage report from test job
         uses: actions/download-artifact@v4
         with:
           name: frontend-coverage-report
           path: front/coverage/bobapp/
 
-      - name: Set up JDK 17 # Required for SonarQube scanner
+      - name: Set up JDK 17   # Required for Java analysis
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: "zulu"
 
-      - name: Set up Node.js # Required for TypeScript analysis
+      - name: Set up Node.js  # Required for TypeScript analysis
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Download backend classes # Get compiled classes for static analysis
+      - name: Download backend classes  # Get compiled classes for Java static analysis
         uses: actions/download-artifact@v4
         with:
           name: backend-classes
@@ -48,7 +48,7 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@master
         env:          
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Allows SonarCloud to add analysis results and comments to Pull Requests
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Allows SonarCloud to add analysis results and comments to Pull Requests (NB : i.e. merge requests)
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: |

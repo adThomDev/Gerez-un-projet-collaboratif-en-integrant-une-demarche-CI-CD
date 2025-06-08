@@ -24,8 +24,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.m2    # Maven local repository location
-          key: ${{ runner.os }}-m2-${{ hashFiles('back/pom.xml') }}   # Cache key based on OS and pom.xml content
-          restore-keys: ${{ runner.os }}-m2   # Fallback key if the exact cache is not found
+          key: ${{ runner.os }}-m2-${{ hashFiles('back/pom.xml') }}   # Cache key (based on OS and pom.xml content)
+          restore-keys: ${{ runner.os }}-m2   # Fallback key
 
       - name: Build and test with Maven
         run: mvn clean verify    # Builds, runs all tests, and generates coverage report
